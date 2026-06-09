@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戏屿青年 - 管理后台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: #7c3aed;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 25px 0;
+        }
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        .menu {
+            list-style: none;
+        }
+        .menu li {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        .menu li.active,
+        .menu li:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .sidebar .logout-box {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+        }
+        .logout-btn {
+            background: #fff;
+            color: #7c3aed;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 80%;
+        }
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 40px;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            color: #7c3aed;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .item {
+            padding: 18px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 10px;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item h4 {
+            margin-bottom: 8px;
+        }
+        .item p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 7px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        .pass { background: #00b42a; color: white; }
+        .refuse { background: #ff4d4f; color: white; }
+        .delete { background: #999; color: white; }
+        .handle { background: #1890ff; color: white; }
+        .empty { text-align: center; padding: 40px 0; color: #999; }
+        .time-input { padding: 6px 10px; border: 1px solid #ddd; border-radius: 5px; margin-right: 8px; }
+        .report-item {
+            padding: 16px;
+            background: #fff9e6;
+            border-left: 4px solid #ff7d00;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        .report-item h4 {
+            color: #ff7d00;
+            margin-bottom: 6px;
+        }
+        .report-status {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .status-wait {
+            background: #fff7e6;
+            color: #ff7d00;
+        }
+        .status-done {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        /* 新加：用户搜索框样式 */
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-input {
+            padding: 8px 12px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+        .search-btn {
+            padding: 8px 16px;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .pwd-input {
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 160px;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <h3>戏屿青年 · 管理后台</h3>
+        <ul class="menu">
+            <li onclick="switchPage('home')">举报中心</li>
+            <li onclick="switchPage('work')">作品审核</li>
+            <li onclick="switchPage('circle')">动态管理</li>
+            <li onclick="switchPage('user')">用户管理</li>
+        </ul>
+        <div class="logout-box">
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page active" id="home">
+            <div class="card">
+                <h2>📢 用户举报接收中心</h2>
+                <p>用户/观众举报的违规内容、不良动态都会在这里显示，管理员可统一处理</p>
+            </div>
+            <div class="card">
+                <h3>举报列表</h3>
+                <div id="reportList"></div>
+            </div>
+        </div>
+
+        <div class="page" id="work">
+            <div class="card">
+                <h2>话剧作品审核</h2>
+                <div id="workList"></div>
+            </div>
+        </div>
+
+        <div class="page" id="circle">
+            <div class="card">
+                <h2>圈子动态管理</h2>
+                <div id="circleList"></div>
+            </div>
+        </div>
+
+        <!-- ====================== 【升级：用户管理】 ====================== -->
+        <div class="page" id="user">
+            <div class="card">
+                <h2>平台用户管理（可查密码/改密码）</h2>
+
+                <!-- 搜索用户 -->
+                <div class="search-box">
+                    <input class="search-input" id="searchKey" placeholder="输入用户名搜索" oninput="loadUsers()">
+                    <button class="search-btn" onclick="loadUsers()">搜索</button>
+                </div>
+
+                <div id="allUser"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const user = localStorage.getItem('currentUser');
+if (!user || !JSON.parse(user).role || JSON.parse(user).role !== 'admin') {
+    alert('无管理员权限！');
+    location.href = '戏屿青年.html';
+}
+
+function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (id === 'home') loadReports();
+    if (id === 'work') loadWorks();
+    if (id === 'circle') loadCircles();
+    if (id === 'user') loadUsers();
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    location.href = '戏屿青年.html';
+}
+
+// ====================== 举报中心 ======================
+function loadReports() {
+    let list = JSON.parse(localStorage.getItem('userReports')) || [];
+    let dom = document.getElementById('reportList');
+    if (list.length === 0) {
+        dom.innerHTML = '<div class="empty">暂无用户举报</div>';
+        return;
+    }
+    let html = '';
+    list.forEach((item, i) => {
+        let statusText = item.status === 0 ? '待处理' : '已处理';
+        let statusClass = item.status === 0 ? 'status-wait' : 'status-done';
+        html += `
+        <div class="report-item">
+            <h4>举报内容：${item.content || '无描述'}</h4>
+            <p>举报用户：${item.userName || '匿名用户'}</p>
+            <p>举报时间：${item.time}</p>
+            <p>状态：<span class="report-status ${statusClass}">${statusText}</span></p>
+            ${item.status === 0 ? `<button class="btn handle" onclick="handleReport(${i})">标记为已处理</button>` : ''}
+        </div>`;
+    });
+    dom.innerHTML = html;
+}
+
+function handleReport(index) {
+    let list = JSON.parse(localStorage.getItem('userReports'));
+    list[index].status = 1;
+    localStorage.setItem('userReports', JSON.stringify(list));
+    alert('已处理该举报');
+    loadReports();
+}
+
+// ====================== 作品审核 ======================
+function loadWorks() {
+    const list = JSON.parse(localStorage.getItem('workApply')) || [];
+    const dom = document.getElementById('workList');
+    if (list.length === 0) { dom.innerHTML = '<div class="empty">暂无审核</div>'; return; }
+    let html = '';
+    list.forEach((item, i) => {
+        let status = '';
+        if(item.status===0) status = '<span style="color:#999">待审核</span>';
+        if(item.status===1) status = '<span style="color:green">已通过</span>';
+        if(item.status===2) status = '<span style="color:red">已拒绝</span>';
+        html += `
+        <div class="item">
+            <h4>${item.workName}</h4>
+            <p>演员：${item.username} | ID：${item.uid}</p>
+            <p>角色：${item.role} | 年份：${item.year}</p>
+            <p>状态：${status}</p>
+            <p>上映时间：${item.showTime || '未设置'}</p>
+            ${item.status === 0 ? `
+            <input class="time-input" type="datetime-local" id="time_${i}">
+            <button class="btn pass" onclick="pass(${i})">通过并设置</button>
+            <button class="btn refuse" onclick="refuse(${i})">拒绝</button>
+            ` : ''}
+        </div>`;
+    });
+    dom.innerHTML = html;
+}
+
+function pass(i) {
+    const t = document.getElementById(`time_${i}`).value;
+    if(!t){ alert("请选择上映时间"); return; }
+    let list = JSON.parse(localStorage.getItem('workApply'));
+    list[i].status = 1;
+    list[i].showTime = t;
+    localStorage.setItem('workApply', JSON.stringify(list));
+    alert("已通过"); loadWorks();
+}
+
+function refuse(i) {
+    let list = JSON.parse(localStorage.getItem('workApply'));
+    list[i].status = 2;
+    localStorage.setItem('workApply', JSON.stringify(list));
+    alert("已拒绝"); loadWorks();
+}
+
+// ====================== 动态管理 ======================
+function loadCircles() {
+    const list = JSON.parse(localStorage.getItem('dramaCircle')) || [];
+    const dom = document.getElementById('circleList');
+    if(list.length===0){ dom.innerHTML='<div class="empty">暂无动态</div>'; return; }
+    let h = '';
+    list.forEach((item,i)=>{
+        h+=`<div class="item">
+            <p>${item.username}：${item.content}</p>
+            <button class="btn delete" onclick="delCircle(${i})">删除</button>
+        </div>`;
+    })
+    dom.innerHTML = h;
+}
+
+function delCircle(i){
+    let list = JSON.parse(localStorage.getItem('dramaCircle'));
+    list.splice(i,1);
+    localStorage.setItem('dramaCircle',JSON.stringify(list));
+    loadCircles();
+}
+
+// ====================== 【升级：用户管理（查密码+改密码+搜索）】 ======================
+function loadUsers() {
+    let list = JSON.parse(localStorage.getItem('xiyuUsers')) || [];
+    const key = document.getElementById('searchKey').value.trim();
+    
+    // 搜索过滤
+    if(key){
+        list = list.filter(u => u.username.includes(key));
+    }
+
+    const dom = document.getElementById('allUser');
+    let h = '';
+    list.forEach((u, index) => {
+        h += `
+        <div class="item">
+            <p><strong>账号：</strong>${u.username}</p>
+            <p><strong>密码：</strong>${u.password}</p>
+            <p><strong>UID：</strong>${u.uid}</p>
+            <p><strong>身份：</strong>${u.role}</p>
+            <input class="pwd-input" id="newPwd_${index}" placeholder="输入新密码">
+            <button class="btn pass" onclick="updatePwd(${index})">修改密码</button>
+        </div>`;
+    });
+    dom.innerHTML = h || '<div class="empty">暂无用户</div>';
+}
+
+// 管理员修改用户密码
+function updatePwd(index) {
+    const newPwd = document.getElementById(`newPwd_${index}`).value.trim();
+    if(!newPwd){
+        alert('请输入新密码！');
+        return;
+    }
+    const list = JSON.parse(localStorage.getItem('xiyuUsers'));
+    list[index].password = newPwd;
+    localStorage.setItem('xiyuUsers', JSON.stringify(list));
+    alert('密码修改成功！');
+    loadUsers();
+}
+
+switchPage('home');
+</script>
+</body>
+</html>
