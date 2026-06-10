@@ -40,7 +40,7 @@
         .avatar-circle {
             width: 110px;
             height: 110px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,250,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -117,7 +117,6 @@
             border-color: #7c3aed;
         }
 
-        /* 身份选择样式 */
         .role-select {
             display: flex;
             gap: 12px;
@@ -175,7 +174,7 @@
             transition: background 0.25s;
         }
         .submit-btn:hover {
-            background-color: #6d28d9;
+            background-color: #6d2ed9;
         }
         .switch-tip {
             text-align: center;
@@ -190,47 +189,49 @@
             cursor: pointer;
         }
 
-        /* ========== 最终版：仅两张图，无轮播，点击切换 ========== */
+        /* 右下角小鹿悬浮框 180px 完整显示人物不裁切 */
         .float-ip-box{
             position: fixed;
-            right: 30px;
-            bottom: 30px;
-            width: 130px;  /* 放大了！不再小 */
-            height: 130px;
+            right: 20px;
+            bottom: 20px;
+            width: 180px;
+            height: 180px;
             z-index: 9999;
             cursor: pointer;
-            position: relative;
             overflow: hidden;
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25);
+            animation: breathe 3s infinite ease-in-out;
+        }
+        @keyframes breathe {
+            0%,100%{transform:translateY(0);}
+            50%{transform:translateY(-4px);}
         }
         .float-ip-box img{
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            object-fit: cover;
-        }
-        #petMain{
-            z-index: 2;
+            width:100%;
+            height:100%;
+            object-fit: contain;
+            background: #fff;
         }
         .float-ip-box:hover{
-            transform: scale(1.05);
+            transform:scale(1.05);
         }
 
-        /* 聊天弹窗美化适配 */
+        /* 对话框高度重新分配，输入框完整不截断 */
         .chat-modal{
             position: fixed;
             right: 20px;
-            bottom: 160px;
-            width: 360px;
+            bottom: 210px;
+            width: 480px;
+            height: 340px;
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 6px 24px rgba(124, 58, 237, 0.12);
             z-index: 9999;
             display: none;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .chat-header{
             background: #7c3aed;
@@ -239,19 +240,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 18px;
+            flex-shrink: 0;
         }
         .chat-close{
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
         }
         .chat-content{
-            height: 320px;
+            flex: 1;
+            height: auto;
+            max-height: 240px;
             padding: 16px;
             overflow-y: auto;
             border-bottom: 1px solid #eee;
         }
         .chat-item{
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             line-height: 1.6;
         }
         .user-chat{
@@ -261,47 +266,53 @@
             display: inline-block;
             background: #7c3aed;
             color: #fff;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 16px 16px 4px 16px;
             max-width: 80%;
+            word-wrap: break-word;
+            font-size: 15px;
         }
         .robot-chat span{
             display: inline-block;
             background: #f3f4f6;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 16px 16px 16px 4px;
             max-width: 80%;
+            word-wrap: break-word;
+            font-size: 15px;
         }
+        /* 输入区域固定高度，强制完整显示 */
         .chat-input-box{
             display: flex;
-            padding: 10px;
-            gap: 8px;
+            padding: 12px;
+            gap: 10px;
+            flex-shrink: 0;
+            height: 70px;
         }
         .chat-input{
             flex: 1;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border: 1px solid #e5e7eb;
-            border-radius: 20px;
+            border-radius: 22px;
             outline: none;
+            font-size: 15px;
         }
         .chat-send{
             background: #7c3aed;
             color: #fff;
             border: none;
-            border-radius: 20px;
-            padding: 0 16px;
+            border-radius: 22px;
+            padding: 0 20px;
             cursor: pointer;
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
-
-<!-- 仅两张图：默认放下，点击抬手 -->
 <div class="float-ip-box" id="petBox">
-    <img id="petMain" src="ip1.png" alt="双手放下">
+    <img id="petMain" src="双手.jpg" alt="静态小鹿">
 </div>
 
-<!-- 问答弹窗 -->
 <div class="chat-modal" id="chatModal">
     <div class="chat-header">
         <span>话剧小助手</span>
@@ -309,7 +320,7 @@
     </div>
     <div class="chat-content" id="chatContent">
         <div class="chat-item robot-chat">
-            <span>你好！我是戏屿青年话剧小助手~</span>
+            <span>你好！我是戏屿青年话剧小助手~有任何话剧、平台相关问题都可以问我</span>
         </div>
     </div>
     <div class="chat-input-box">
@@ -318,250 +329,260 @@
     </div>
 </div>
 
-    <div class="login-card">
-        <div class="card-left">
-            <div class="avatar-circle" id="faceEmoji">😟</div>
-            <h1>戏屿青年</h1>
-            <div class="sub-title">青年话剧演员平台</div>
-            <div class="platform-desc">
-                <h4>平台介绍</h4>
-                <p>戏屿青年面向全国青年话剧爱好者、舞台剧演员，提供作品展示、剧组招募、同行交流社区功能。你可以发布舞台动态、管理个人演出作品、报名线下话剧试镜，和万千话剧从业者交流舞台心得。</p>
-            </div>
-        </div>
-
-        <div class="card-right">
-            <div class="form-wrap active" id="loginForm">
-                <h2>欢迎回来</h2>
-                <p class="form-desc">请登录你的账号</p>
-                <div class="form-item">
-                    <label>用户名</label>
-                    <input type="text" id="loginUser" placeholder="请输入用户名">
-                </div>
-                <div class="form-item">
-                    <label>密码</label>
-                    <input type="password" id="loginPwd" placeholder="请输入密码">
-                </div>
-                <div class="privacy-box">
-                    <input type="checkbox" id="loginCheck">
-                    <span>我已阅读并同意<a href="javascript:alert('《用户隐私政策》')">《用户隐私政策》</a>与<a href="javascript:alert('《用户服务协议》')">《用户服务协议》</a></span>
-                </div>
-                <button class="submit-btn" onclick="doLogin()">登录</button>
-                <div class="switch-tip">没有账号？<a onclick="switchForm('reg')">去注册</a></div>
-            </div>
-
-            <div class="form-wrap" id="regForm">
-                <h2>创建账号</h2>
-                <p class="form-desc">加入戏屿青年话剧平台</p>
-                <div class="form-item">
-                    <label>用户名</label>
-                    <input type="text" id="regUser" placeholder="请输入演员昵称">
-                </div>
-                <div class="form-item">
-                    <label>密码</label>
-                    <input type="password" id="regPwd" placeholder="设置登录密码">
-                </div>
-                <div class="form-item">
-                    <label>确认密码</label>
-                    <input type="password" id="regRePwd" placeholder="再次输入密码">
-                </div>
-
-                <!-- 必选：身份选择 -->
-                <div class="form-item">
-                    <label>选择你的身份（必选）</label>
-                    <div class="role-select">
-                        <div class="role-item" data-role="actor">演员</div>
-                        <div class="role-item" data-role="viewer">观众</div>
-                        <div class="role-item" data-role="director">导演</div>
-                    </div>
-                </div>
-
-                <div class="privacy-box">
-                    <input type="checkbox" id="regCheck">
-                    <span>我已阅读并同意<a href="javascript:alert('《用户隐私政策》')">《用户隐私政策》</a>与<a href="javascript:alert('《用户服务协议》')">《用户服务协议》</a></span>
-                </div>
-                <button class="submit-btn" onclick="doRegister()">注册</button>
-                <div class="switch-tip">已有账号？<a onclick="switchForm('login')">去登录</a></div>
-            </div>
+<div class="login-card">
+    <div class="card-left">
+        <div class="avatar-circle" id="faceEmoji">😟</div>
+        <h1>戏屿青年</h1>
+        <div class="sub-title">青年话剧演员平台</div>
+        <div class="platform-desc">
+            <h4>平台介绍</h4>
+            <p>戏屿青年面向全国青年话剧爱好者，舞台剧演员，提供作品展示、剧组招募、同行交流社区功能。你可以发布舞台动态、管理演出作品、报名线下试镜。</p>
         </div>
     </div>
 
-    <script>
-        const faceEmoji = document.getElementById('faceEmoji');
-        let selectedRole = "";
+    <div class="card-right">
+        <div class="form-wrap active" id="loginForm">
+            <h2>欢迎回来</h2>
+            <p class="form-desc">请登录你的账号</p>
+            <div class="form-item">
+                <label>用户名</label>
+                <input type="text" id="loginUser" placeholder="请输入用户名">
+            </div>
+            <div class="form-item">
+                <label>密码</label>
+                <input type="password" id="loginPwd" placeholder="请输入密码">
+            </div>
+            <div class="privacy-box">
+                <input type="checkbox" id="loginCheck">
+                <span>我已阅读并同意<a href="javascript:alert('隐私政策')">《用户隐私政策》</a>与<a href="javascript:alert('服务协议')">《服务协议》</a></span>
+            </div>
+            <button class="submit-btn" onclick="doLogin()">登录</button>
+            <div class="switch-tip">没有账号？<a onclick="switchForm('reg')">去注册</a></div>
+        </div>
 
-        // 切换登录/注册
-        function switchForm(type) {
-            document.querySelectorAll('.form-wrap').forEach(item => item.classList.remove('active'));
-            if(type === 'login') {
-                document.getElementById('loginForm').classList.add('active');
-                faceEmoji.textContent = '😟';
-            }else{
-                document.getElementById('regForm').classList.add('active');
-                faceEmoji.textContent = '😊';
-            }
+        <div class="form-wrap" id="regForm">
+            <h2>创建账号</h2>
+            <p class="form-desc">加入戏屿青年话剧平台</p>
+            <div class="form-item">
+                <label>用户名</label>
+                <input type="text" id="regUser" placeholder="请输入演员昵称">
+            </div>
+            <div class="form-item">
+                <label>密码</label>
+                <input type="password" id="regPwd" placeholder="设置登录密码">
+            </div>
+            <div class="form-item">
+                <label>确认密码</label>
+                <input type="password" id="regRePwd" placeholder="再次输入密码">
+            </div>
+
+            <div class="form-item">
+                <label>选择你的身份（必选）</label>
+                <div class="role-select">
+                    <div class="role-item" data-role="actor">演员</div>
+                    <div class="role-item" data-role="viewer">观众</div>
+                    <div class="role-item" data-role="director">导演</div>
+                </div>
+            </div>
+
+            <div class="privacy-box">
+                <input type="checkbox" id="regCheck">
+                <span>我已阅读并同意<a href="javascript:alert('隐私政策')">《隐私政策》</a>与<a href="javascript:alert('服务协议')">《服务协议》</a></span>
+            </div>
+            <button class="submit-btn" onclick="doRegister()">注册</button>
+            <div class="switch-tip">已有账号？<a onclick="switchForm('login')">去登录</a></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://api.deepseek.com/v1/chat/completions";
+    const petMain = document.getElementById("petMain");
+    const faceEmoji = document.getElementById('faceEmoji');
+    let selectedRole = "";
+
+    function switchForm(type) {
+        document.querySelectorAll('.form-wrap').forEach(item => item.classList.remove('active'));
+        if(type === 'login') {
+            document.getElementById('loginForm').classList.add('active');
+            faceEmoji.textContent = '😟';
+        }else{
+            document.getElementById('regForm').classList.add('active');
+            faceEmoji.textContent = '😊';
+        }
+    }
+
+    document.querySelectorAll('.role-item').forEach(item => {
+        item.onclick = function() {
+            document.querySelectorAll('.role-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            selectedRole = this.getAttribute('data-role');
+        }
+    });
+
+    function doLogin() {
+        const username = document.getElementById('loginUser').value.trim();
+        const pwd = document.getElementById('loginPwd').value;
+        const isAgree = document.getElementById('loginCheck').checked;
+
+        if(!isAgree) {
+            faceEmoji.textContent = '😥';
+            alert('请勾选同意隐私政策和用户协议后再登录');
+            return;
+        }
+        if(!username || !pwd) {
+            faceEmoji.textContent = '😥';
+            alert('用户名和密码不能为空');
+            return;
         }
 
-        // 身份选择点击
-        document.querySelectorAll('.role-item').forEach(item => {
-            item.onclick = function() {
-                document.querySelectorAll('.role-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                selectedRole = this.getAttribute('data-role');
-            }
-        });
-
-        // ==========================
-        // 登录逻辑
-        // ==========================
-        function doLogin() {
-            const username = document.getElementById('loginUser').value.trim();
-            const pwd = document.getElementById('loginPwd').value;
-            const isAgree = document.getElementById('loginCheck').checked;
-
-            if(!isAgree) {
-                faceEmoji.textContent = '😥';
-                alert('请勾选同意隐私政策和用户协议后再登录');
-                return;
-            }
-            if(!username || !pwd) {
-                faceEmoji.textContent = '😥';
-                alert('用户名和密码不能为空');
-                return;
-            }
-
-            if(username === 'admin' && pwd === 'admin123'){
-                localStorage.setItem('currentUser', JSON.stringify({
-                    username: '管理员',
-                    role: 'admin'
-                }));
-                faceEmoji.textContent = '👨‍💻';
-                alert('管理员登录成功！正在进入管理后台');
-                location.href = '戏屿青年管理员.html';
-                return;
-            }
-
-            const userList = JSON.parse(localStorage.getItem('xiyuUsers') || '[]');
-            const targetUser = userList.find(item => item.username === username && item.password === pwd);
-
-            if(!targetUser) {
-                faceEmoji.textContent = '😵';
-                alert('账号或密码错误，请重新输入');
-                return;
-            }
-
-            localStorage.setItem('currentUser', JSON.stringify(targetUser));
-            faceEmoji.textContent = '🥳';
-            alert('登录成功，欢迎来到戏屿青年！');
-            location.href = '戏屿青年主页面.html';
+        if(username === 'admin' && pwd === 'admin123'){
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: '管理员',
+                role: 'admin'
+            }));
+            faceEmoji.textContent = '👨‍💻';
+            alert('管理员登录成功！正在进入管理后台');
+            location.href = '戏屿青年管理员.html';
+            return;
         }
 
-        // 注册逻辑
-        function doRegister() {
-            const username = document.getElementById('regUser').value.trim();
-            const pwd = document.getElementById('regPwd').value;
-            const rePwd = document.getElementById('regRePwd').value;
-            const isAgree = document.getElementById('regCheck').checked;
+        const userList = JSON.parse(localStorage.getItem('xiyuUsers') || '[]');
+        const targetUser = userList.find(item => item.username === username && item.password === pwd);
 
-            if(!isAgree) {
-                faceEmoji.textContent = '😥';
-                alert('请勾选同意隐私政策和用户协议后注册');
-                return;
-            }
-            if(!username || !pwd || !rePwd) {
-                faceEmoji.textContent = '😥';
-                alert('请填写完整注册信息');
-                return;
-            }
-            if(pwd !== rePwd) {
-                faceEmoji.textContent = '😵';
-                alert('两次输入的密码不一致');
-                return;
-            }
-            if(!selectedRole) {
-                faceEmoji.textContent = '😥';
-                alert('请选择你的身份：演员/观众/导演');
-                return;
-            }
-
-            const userList = JSON.parse(localStorage.getItem('xiyuUsers') || '[]');
-            const repeatUser = userList.find(item => item.username === username);
-            if(repeatUser) {
-                faceEmoji.textContent = '😟';
-                alert('该用户名已被注册，请更换昵称');
-                return;
-            }
-
-            const newUser = {
-                uid: Date.now(),
-                username: username,
-                password: pwd,
-                age: "",
-                playYear: "",
-                intro: "",
-                role: selectedRole
-            };
-            userList.push(newUser);
-            localStorage.setItem('xiyuUsers', JSON.stringify(userList));
-
-            faceEmoji.textContent = '🥳';
-            alert('注册成功！请前往登录页面登录账号');
-            switchForm('login');
+        if(!targetUser) {
+            faceEmoji.textContent = '😵';
+            alert('账号或密码错误，请重新输入');
+            return;
         }
 
-        // 表情交互
-        document.getElementById('loginUser').addEventListener('input',()=>{faceEmoji.textContent='😊'});
-        document.getElementById('loginPwd').addEventListener('focus',()=>{faceEmoji.textContent='😳'});
-        document.getElementById('regUser').addEventListener('input',()=>{faceEmoji.textContent='😄'});
-        document.getElementById('regPwd').addEventListener('focus',()=>{faceEmoji.textContent='😳'});
-        document.getElementById('regRePwd').addEventListener('input',()=>{faceEmoji.textContent='🥰'});
+        localStorage.setItem('currentUser', JSON.stringify(targetUser));
+        faceEmoji.textContent = '🥳';
+        alert('登录成功，欢迎来到戏屿青年！');
+        location.href = '戏屿青年主页面.html';
+    }
 
-        // ========== 核心：点击抬手，松开恢复（仅两张图） ==========
-        const petMain = document.getElementById("petMain");
-        const petBox = document.getElementById("petBox");
+    function doRegister() {
+        const username = document.getElementById('regUser').value.trim();
+        const pwd = document.getElementById('regPwd').value;
+        const rePwd = document.getElementById('regRePwd').value;
+        const isAgree = document.getElementById('regCheck').checked;
 
-        // 鼠标按下 = 抬手打招呼
-        petBox.onmousedown = function(){
-            petMain.src = "ip2.png";
+        if(!isAgree) {
+            faceEmoji.textContent = '😥';
+            alert('请勾选同意隐私政策和用户协议后注册');
+            return;
+        }
+        if(!username || !pwd || !rePwd) {
+            faceEmoji.textContent = '😥';
+            alert('请填写完整注册信息');
+            return;
+        }
+        if(pwd !== rePwd) {
+            faceEmoji.textContent = '😵';
+            alert('两次输入的密码不一致');
+            return;
+        }
+        if(!selectedRole) {
+            faceEmoji.textContent = '😥';
+            alert('请选择你的身份：演员/观众/导演');
+            return;
         }
 
-        // 鼠标松开 = 恢复双手放下
-        petBox.onmouseup = function(){
-            petMain.src = "ip1.png";
+        const userList = JSON.parse(localStorage.getItem('xiyuUsers') || '[]');
+        const repeatUser = userList.find(item => item.username === username);
+        if(repeatUser) {
+            faceEmoji.textContent = '😟';
+            alert('该用户名已被注册，请更换昵称');
+            return;
         }
 
-        petBox.onmouseleave = function(){
-            petMain.src = "ip1.png";
-        }
+        const newUser = {
+            uid: Date.now(),
+            username: username,
+            password: pwd,
+            age: "",
+            playYear: "",
+            intro: "",
+            role: selectedRole
+        };
+        userList.push(newUser);
+        localStorage.setItem('xiyuUsers', JSON.stringify(userList));
 
-        // 点击打开聊天
-        petBox.onclick = function(){
-            openChatWindow();
-        }
+        faceEmoji.textContent = '🥳';
+        alert('注册成功！请前往登录页面登录账号');
+        switchForm('login');
+    }
 
-        // 问答弹窗
-        function openChatWindow(){
-            document.getElementById("chatModal").style.display = "block";
+    document.getElementById('loginUser').addEventListener('input',()=>{faceEmoji.textContent='😊'});
+    document.getElementById('loginPwd').addEventListener('focus',()=>{faceEmoji.textContent='😳'});
+    document.getElementById('regUser').addEventListener('input',()=>{faceEmoji.textContent='😄'});
+    document.getElementById('regPwd').addEventListener('focus',()=>{faceEmoji.textContent='😳'});
+    document.getElementById('regRePwd').addEventListener('input',()=>{faceEmoji.textContent='🥰'});
+
+    document.getElementById("petBox").onclick = function(){
+        openChatWindow();
+    }
+
+    function openChatWindow(){
+        document.getElementById("chatModal").style.display = "flex";
+        petMain.src = "招手.jpg";
+    }
+    function closeChatWindow(){
+        document.getElementById("chatModal").style.display = "none";
+        petMain.src = "双手.jpg";
+    }
+
+    async function sendChatMsg(){
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        const chatWrap = document.getElementById("chatContent");
+        if(!text) return;
+
+        chatWrap.innerHTML += `<div class="chat-item user-chat"><span>${text}</span></div>`;
+        input.value = "";
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+
+        const loadingDom = document.createElement('div');
+        loadingDom.className = "chat-item robot-chat";
+        loadingDom.innerHTML = `<span>思考中...</span>`;
+        chatWrap.appendChild(loadingDom);
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+
+        try{
+            const res = await fetch(API_URL,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":"Bearer sk-796d0d898784469492503c3a7cb23e2e"
+                },
+                body:JSON.stringify({
+                    model:"deepseek-chat",
+                    messages:[
+                        {
+                            role:"system",
+                            content:"你是戏屿青年话剧平台AI助手，温柔专业，只回答话剧、演员、表演、舞台、剧组招募、平台使用相关问题。"
+                        },
+                        {role:"user",content:text}
+                    ],
+                    temperature:0.7
+                })
+            })
+            const data = await res.json();
+            loadingDom.remove();
+            const answer = data.choices[0].message.content;
+            chatWrap.innerHTML += `<div class="chat-item robot-chat"><span>${answer}</span></div>`;
+        }catch(err){
+            loadingDom.remove();
+            chatWrap.innerHTML += `<div class="chat-item robot-chat"><span>连接失败：本地打开需关闭Chrome跨域安全限制</span></div>`;
+            console.error("错误：", err);
         }
-        function closeChatWindow(){
-            document.getElementById("chatModal").style.display = "none";
-        }
-        function sendChatMsg(){
-            const input = document.getElementById("chatInput");
-            const text = input.value.trim();
-            if(!text) return;
-            const chatWrap = document.getElementById("chatContent");
-            chatWrap.innerHTML += `<div class="chat-item user-chat"><span>${text}</span></div>`;
-            input.value = "";
-            setTimeout(()=>{
-                let replyText = "我可以帮你解答登录、注册、身份选择、平台使用相关问题哦！";
-                chatWrap.innerHTML += `<div class="chat-item robot-chat"><span>${replyText}</span></div>`;
-                chatWrap.scrollTop = chatWrap.scrollHeight;
-            },600);
-            chatWrap.scrollTop = chatWrap.scrollHeight;
-        }
-        document.addEventListener("keydown",(e)=>{
-            if(e.key === "Enter") sendChatMsg();
-        })
-    </script>
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+    }
+
+    document.addEventListener("keydown",(e)=>{
+        if(e.key === "Enter") sendChatMsg();
+    })
+</script>
 </body>
 </html>
